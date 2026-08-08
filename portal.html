@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSCRL — Members</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+  #loading { color: #666; }
+  #content { display: none; }
+  #logout-btn { float: right; }
+  .role { color: #555; font-size: 0.9em; }
+  a.button { display: block; margin-top: 14px; padding: 14px 20px; border: 1px solid #333; text-decoration: none; color: #333; }
+  a.button span { display: block; font-size: 0.85em; color: #666; margin-top: 4px; }
+  #norole { color: #c0392b; }
+</style>
+</head>
+<body>
+
+<div id="loading">Checking login…</div>
+
+<div id="content">
+  <button id="logout-btn">Log Out</button>
+  <h2>Garden State Combat Robot League</h2>
+  <p class="role" id="whoami"></p>
+
+  <a class="button" id="link-dashboard" href="site/dashboard.html" style="display:none;">
+    Leadership Dashboard
+    <span>Board and leadership material.</span>
+  </a>
+
+  <a class="button" id="link-app" href="app/home.html" style="display:none;">
+    GSCRL App
+    <span>Open to all signed-in members.</span>
+  </a>
+
+  <p id="norole" style="display:none;">
+    Your account has no role assigned yet, so there is nothing to show.
+    An admin needs to grant you one.
+  </p>
+</div>
+
+<script type="module">
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+  const supabase = createClient(
+    "https://jcqnsgbnsmwoncjehvqq.supabase.co",
+    "sb_publishable_99kP3nKCaLhcwShKLs8zZA_K1nxz4xf"
+  );
+
+  const loadingEl = document.getElementById("loading");
+  const contentEl = document.getElementById("content");
+  const whoamiEl = document.getElementById("whoami");
+
+  async function readOwnRow(userId) {
+    return await supabase
+      .from("users")
+      .select("id, email, role_id, roles(name)")
+      .eq("id", userId)
+      .maybeSingle();
+  }
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      window.location.href = "error.html";
+      return;
+    }
+
+    let { data: userRow, error } = await readOwnRow(session.user.id);
+
+    if (!userRow && !error) {
+      await supabase
+        .from("users")
+        .insert({ id: session.user.id, email: session.user.email });
+      ({ data: userRow, error } = await readOwnRow(session.user.id));
+    }
+
+    loadingEl.style.display = "none";
+    contentEl.style.display = "block";
+
+    if (error) {
+      whoamiEl.textContent = "Could not read your account: " + error.message;
+      return;
+    }
+
+    const role = userRow && userRow.roles ? userRow.roles.name : null;
+    whoamiEl.textContent = session.user.email + (role ? " — " + role : " — no role");
+
+    if (role === "admin") {
+      document.getElementById("link-dashboard").style.display = "block";
+      document.getElementById("link-app").style.display = "block";
+    } else if (role === "volunteer") {
+      document.getElementById("link-app").style.display = "block";
+    } else {
+      document.getElementById("norole").style.display = "block";
+    }
+  }
+
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    window.location.href = "index.html";
+  });
+
+  init();
+</script>
+
+</body>
+</html>
