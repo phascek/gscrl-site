@@ -19,13 +19,52 @@
 	display: block;
 }
 
-/* Push the auth items to the bottom of the sidebar nav. */
+/* Separate the auth items from the nav above them. The template already draws
+   a rule between nav items, so adding a border here produced a doubled
+   divider -- spacing alone is enough. */
 #sidebar nav ul li#auth-link,
 #sidebar nav ul li#login-panel,
 #sidebar nav ul li#signed-in {
-	margin-top: 1.5em;
-	border-top: solid 1px rgba(255, 255, 255, 0.15);
-	padding-top: 1em;
+	margin-top: 1.25em;
+}
+
+/* Members Area grouping */
+#sidebar nav ul li#members-heading .side-heading {
+	display: block;
+	font-size: 0.7em;
+	letter-spacing: 0.15em;
+	text-transform: uppercase;
+	opacity: 0.55;
+	padding: 0.5em 0;
+}
+
+#sidebar nav ul li#members-heading {
+	margin-top: 1.25em;
+}
+
+/* Manage Users nests under GSCRL App */
+#sidebar nav ul ul.side-sub {
+	margin: 0;
+	padding-left: 1.25em;
+}
+
+#sidebar nav ul ul.side-sub li {
+	border: 0;
+	padding: 0;
+}
+
+#sidebar nav ul ul.side-sub li a {
+	font-size: 0.85em;
+	opacity: 0.85;
+	border: 0;
+}
+
+#sidebar nav ul ul.side-sub li#nav-manage {
+	display: none;
+}
+
+#sidebar nav ul ul.side-sub li#nav-manage.visible {
+	display: block;
 }
 
 #sidebar nav ul li#login-panel input {
