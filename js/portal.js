@@ -45,6 +45,7 @@ async function init() {
   if (role === "admin") {
     document.getElementById("link-dashboard").style.display = "block";
     document.getElementById("link-app").style.display = "block";
+    document.getElementById("link-invite").style.display = "block";
   } else if (role === "volunteer") {
     document.getElementById("link-app").style.display = "block";
   } else {
