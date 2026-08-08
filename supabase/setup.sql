@@ -31,8 +31,12 @@ as $$
   );
 $$;
 
-revoke all on function public.is_admin() from public, anon;
-grant execute on function public.is_admin() to authenticated;
+-- anon needs EXECUTE too. Policies referencing is_admin() are evaluated for
+-- every reader, so without the grant an anonymous query raises 42501 instead
+-- of returning zero rows. The function only returns a boolean derived from
+-- auth.uid(), which is null for anon, so this exposes nothing.
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated, anon;
 
 drop policy if exists "admins can read all users" on public.users;
 create policy "admins can read all users"
