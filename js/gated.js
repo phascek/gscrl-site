@@ -3,6 +3,9 @@ import { client } from "./config.js";
 // Shared behaviour for the two gated pages. RLS decides which rows come back;
 // an empty result means this session is not entitled to the area, so there is
 // nothing to render and we bounce to the public error page.
+//
+// Returns the Supabase client on success, or null when it has redirected, so
+// callers can do further authenticated work without opening a second client.
 export async function renderArea(area) {
   const supabase = client();
 
@@ -19,7 +22,7 @@ export async function renderArea(area) {
 
   if (!session) {
     window.location.href = "../error.html";
-    return;
+    return null;
   }
 
   const { data, error } = await supabase
@@ -30,7 +33,7 @@ export async function renderArea(area) {
 
   if (error || !data || data.length === 0) {
     window.location.href = "../error.html";
-    return;
+    return null;
   }
 
   loadingEl.style.display = "none";
@@ -46,4 +49,6 @@ export async function renderArea(area) {
     div.append(h3, p);
     itemsEl.append(div);
   }
+
+  return supabase;
 }

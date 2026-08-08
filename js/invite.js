@@ -18,17 +18,23 @@ async function init() {
     return;
   }
 
-  // Hide the form from non-admins. This is courtesy only -- the Edge Function
-  // re-checks the role server-side, so hiding it is not what enforces access.
-  const { data: row } = await supabase
-    .from("users")
-    .select("roles(name)")
-    .eq("id", session.user.id)
-    .maybeSingle();
+  // Hide the form from anyone without the capability. This is courtesy only --
+  // the Edge Function re-checks the key server-side, so hiding the page is not
+  // what enforces access.
+  const { data: keys, error: keysErr } = await supabase.rpc("my_keys");
 
-  if (!row || !row.roles || row.roles.name !== "admin") {
+  if (keysErr || !Array.isArray(keys) || !keys.includes("manage-users")) {
     window.location.href = "../error.html";
     return;
+  }
+
+  // Populate roles from the table rather than hardcoding them here.
+  const { data: roles } = await supabase.from("roles").select("name").order("id");
+  for (const r of roles ?? []) {
+    const opt = document.createElement("option");
+    opt.value = r.name;
+    opt.textContent = r.name;
+    roleEl.append(opt);
   }
 
   loadingEl.style.display = "none";

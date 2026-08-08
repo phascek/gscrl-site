@@ -14,6 +14,8 @@
   .item h3 { margin: 0 0 6px; font-size: 1em; }
   .item p { margin: 0; color: #444; }
   a.back { display: block; margin-top: 20px; font-size: 0.85em; }
+  a.action { display: none; margin: 4px 8px 12px 0; padding: 8px 14px; border: 1px solid #333; text-decoration: none; color: #333; font-size: 0.9em; }
+  #actions { margin-bottom: 8px; }
 </style>
 </head>
 <body>
@@ -23,6 +25,11 @@
 <div id="content">
   <button id="logout-btn">Log Out</button>
   <h2>GSCRL App</h2>
+
+  <div id="actions">
+    <a class="action" id="link-manage-users" href="invite.html">Manage Users</a>
+  </div>
+
   <div id="items"></div>
   <a class="back" href="../portal.html">← Back to members area</a>
 </div>

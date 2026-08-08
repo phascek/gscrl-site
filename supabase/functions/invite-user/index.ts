@@ -1,15 +1,15 @@
 // Admin-only invite endpoint.
 //
 // Creating a user requires the service role key, which can never ship in a
-// static page -- hence this function. It re-checks the caller's admin role
-// server-side rather than trusting the browser, so a volunteer who calls this
-// endpoint directly is refused.
+// static page -- hence this function. It re-checks the caller's capability
+// server-side rather than trusting the browser, so someone without the
+// manage-users key who calls this endpoint directly is refused.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SITE_URL = "https://phascek.github.io/gscrl-site";
 const ALLOWED_ORIGIN = "https://phascek.github.io";
-const ALLOWED_ROLES = ["admin", "volunteer"];
+const REQUIRED_KEY = "manage-users";
 
 const cors = {
   "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
@@ -40,18 +40,26 @@ Deno.serve(async (req) => {
   const { data: { user }, error: userErr } = await admin.auth.getUser(jwt);
   if (userErr || !user) return json({ error: "Not signed in" }, 401);
 
-  // 2. Confirm the caller is an admin. Never trust the page for this.
+  // 2. Confirm the caller holds the manage-users key. Never trust the page.
   const { data: callerRow } = await admin
     .from("users")
-    .select("role_id, roles(name)")
+    .select("role_id")
     .eq("id", user.id)
     .maybeSingle();
 
-  if (!callerRow || (callerRow.roles as { name?: string } | null)?.name !== "admin") {
-    return json({ error: "Admins only" }, 403);
-  }
+  if (!callerRow?.role_id) return json({ error: "Not permitted" }, 403);
 
-  // 3. Validate input.
+  const { data: keyRow } = await admin
+    .from("role_keys")
+    .select("key_id, keys!inner(name)")
+    .eq("role_id", callerRow.role_id)
+    .eq("keys.name", REQUIRED_KEY)
+    .maybeSingle();
+
+  if (!keyRow) return json({ error: "Not permitted" }, 403);
+
+  // 3. Validate input. Roles are read from the table rather than hardcoded,
+  // so adding a role does not require redeploying this function.
   let body: { email?: string; role?: string };
   try {
     body = await req.json();
@@ -63,7 +71,6 @@ Deno.serve(async (req) => {
   const role = (body.role ?? "").trim();
 
   if (!email || !email.includes("@")) return json({ error: "A valid email is required" }, 400);
-  if (!ALLOWED_ROLES.includes(role)) return json({ error: "Unknown role" }, 400);
 
   const { data: roleRow } = await admin
     .from("roles")
@@ -71,7 +78,7 @@ Deno.serve(async (req) => {
     .eq("name", role)
     .maybeSingle();
 
-  if (!roleRow) return json({ error: "Role not found" }, 400);
+  if (!roleRow) return json({ error: "Unknown role" }, 400);
 
   // 4. Send the invite. Supabase mints a one-time, expiring token and mails it.
   const { data: invited, error: inviteErr } = await admin.auth.admin.inviteUserByEmail(
