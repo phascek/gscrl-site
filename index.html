@@ -1,20 +1,404 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>GSCRL</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' data:; base-uri 'none'; form-action 'none'">
-<style>
-  body { font-family: sans-serif; max-width: 600px; margin: 80px auto; padding: 0 20px; text-align: center; }
-  a.button { display: inline-block; margin-top: 20px; padding: 10px 20px; border: 1px solid #333; text-decoration: none; color: #333; }
-</style>
-</head>
-<body>
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Garden State Combat Robotics League</title>
+		<meta charset="utf-8" />
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.paypalobjects.com; form-action https://www.paypal.com mailto:; base-uri 'none'; object-src 'none'" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
 
-<h1>Garden State Combat Robot League</h1>
-<p>This is the public page. Anyone can see this, logged in or not.</p>
-<a class="button" href="login.html">Member Login →</a>
+		<!-- Sidebar -->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+					<img src="assets/img/gscrl.svg" alt="Garden State Combat Robotics League Logo" style="width: 100%">
+						<ul>
+							<li><a href="#intro">Start</a></li>
+							<li><a href="#next-season">Next Season</a></li>
+							<li><a href="#champions">Champions</a></li>
+							<li><a href="#events">Season Recap</a></li>
+							<li><a href="#sponsors">Sponsors</a></li>
+							<li><a href="#about">About</a></li>
+							<li><a href="#contactus">Contact Us</a></li>
+							<li><a href="support.html">Support Us</a></li>
+							<li><a href="login.html">Member Login</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
 
-</body>
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Intro Section -->
+					<section id="intro" class="wrapper style1 fade-up">
+						<div class="inner">
+							<h1>GSCRL</h1>
+							<p>Combat robotics in New Jersey. Built, driven, and broken by the people who show up.</p>
+							<p class="next-up">Next up &mdash; <strong>Sussex County Maker Fest, October 3rd &amp; 4th</strong>, opening the 2026-2027 season.</p>
+							<ul class="actions">
+								<li><a href="#next-season" class="button primary scrolly">Next Season</a></li>
+								<li><a href="#champions" class="button scrolly">2025-2026 Champions</a></li>
+								<li><a href="https://www.youtube.com/@gscrl" class="button">Watch</a></li>
+							</ul>
+						</div>
+					</section>
+
+					<!-- Next Season -->
+					<section id="next-season" class="wrapper style2 fade-up">
+						<div class="inner">
+							<h2>The 2026-2027 Season</h2>
+							<p>The season opens at <strong>Sussex County Maker Fest on October 3rd and 4th</strong>. The rest of the schedule is still being set, and a September event may be added before then.</p>
+							<p>Rules, build recommendations, and the rest of the season dates are all being decided right now, and we want them shaped by the people who build and compete. Have a proposal? A rule that needs clarifying, a safety procedure worth tightening, a build guideline that would help new competitors get in the arena? Send it our way.</p>
+							<ul class="actions">
+								<li><a href="#contactus" class="button primary">Submit a Proposal</a></li>
+								<li><a href="https://discord.gg/qwkeeVWgs2" class="button">Join the Discord</a></li>
+							</ul>
+						</div>
+					</section>
+
+					<!-- Season Wrap: thank-you and champions -->
+					<section id="events" class="wrapper style2-alt">
+						<div class="inner">
+							<h2>Thank You for an Amazing Season</h2>
+							<p>That's a wrap on 2025-2026. Eight events, hundreds of matches, and a whole lot of broken parts later, the season closed out at the New Jersey State Fair on August 1st.</p>
+							<p>Thank you to every builder who put a bot in the box, every volunteer who ran the floor and kept the stream going, every venue that hosted us, and every sponsor who made it possible. None of this happens without you.</p>
+
+							<div id="champions">
+							<h3>2025-2026 Season Champions</h3>
+							<p>Congratulations to our champions, and to everyone who made the podium.</p>
+							<div class="table-wrapper">
+								<table>
+									<thead>
+										<tr>
+											<th>Weight Class</th>
+											<th>Champion</th>
+											<th>Runner-Up</th>
+											<th>Third</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td data-label="Weight Class">Plastic Antweight</td>
+											<td data-label="Champion"><strong>Trampoline</strong></td>
+											<td data-label="Runner-Up">Last Minute</td>
+											<td data-label="Third">X4n</td>
+										</tr>
+										<tr>
+											<td data-label="Weight Class">Antweight</td>
+											<td data-label="Champion"><strong>Flamingo</strong></td>
+											<td data-label="Runner-Up">The Darkest Timeline</td>
+											<td data-label="Third">Bumblebee</td>
+										</tr>
+										<tr>
+											<td data-label="Weight Class">Beetleweight</td>
+											<td data-label="Champion"><strong>Prince</strong></td>
+											<td data-label="Runner-Up">Crumplestiltskin</td>
+											<td data-label="Third">Lunatic</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+							<p>Full brackets: <a href="https://truefinals.com/tournament/44cc324827654000">Plastic Ants</a> &middot; <a href="https://truefinals.com/tournament/1b730f90f7614efc">Ants</a> &middot; <a href="https://truefinals.com/tournament/a3478e28e29f47b5">Beetles</a></p>
+							</div>
+						</div>
+					</section>
+
+					<section class="wrapper style2">
+						<div class="inner">
+							<h2>2025-2026 Season Recap</h2>
+							<p>Relive the events, brackets, and livestreams below.</p>
+						</div>
+					</section>
+
+					<section class="wrapper style2-alt spotlights">
+						<section>
+							<a href="https://www.robotcombatevents.com/events/5901" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>New Jersey State Fair @ Sussex County Fairgrounds</h2>
+									<h3>2025-2026 GSCRL Season Championship</h3>
+									<h3>August 1st, 2026</h3>
+									<p>37 Plains Rd, Augusta, NJ</p>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/5901" class="button fit">Event Info</a></li>
+									</ul>
+
+									<ul class="actions">
+										<li><a href="https://truefinals.com/tournament/1b730f90f7614efc" class="button fit">Brackets [Ants]</a></li>
+										<li><a href="https://truefinals.com/tournament/44cc324827654000" class="button fit">Brackets [Plants]</a></li>
+										<li><a href="https://truefinals.com/tournament/a3478e28e29f47b5" class="button fit">Brackets [Beetles]</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<a href="https://www.robotcombatevents.com/events/5971" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Farmers' Fair Fight Fest</h2>
+									<h3>Exhibition</h3>
+									<h3>July 26th, 2026</h3>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/5971" class="button fit">Event Info</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<a href="https://www.robotcombatevents.com/events/5970" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>June Jumble @ Warren County Balloon Festival</h2>
+									<h3>June 6th & 7th, 2026</h3>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/5970" class="button fit">Event Info</a></li>
+										<li><a href="https://www.youtube.com/watch?v=81IGNNt6_PM" class="button fit">VOD [Day 1]</a></li>
+										<li><a href="https://www.youtube.com/watch?v=EJ6teM95fz8" class="button fit">VOD [Day 2]</a></li>
+									</ul>
+
+									<ul class="actions">
+										<li><a href="https://truefinals.com/tournament/80760edc122d4c2b" class="button fit">Brackets [Ants]</a></li>
+										<li><a href="https://truefinals.com/tournament/22928dbb34ca481f" class="button fit">Brackets [Plants]</a></li>
+										<li><a href="https://truefinals.com/tournament/a6b4515ddb5a44ce" class="button fit">Brackets [Beetles]</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<a href="https://www.robotcombatevents.com/events/5969" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>GSCRL @ Warren County Technical School</h2>
+									<h3>April 25th, 2026</h3>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/5969" class="button fit">Event Info</a></li>
+										<li><a href="https://www.youtube.com/watch?v=7aHT5VUZZ6Q" class="button fit">VOD</a></li>
+									</ul>
+
+									<ul class="actions">
+										<li><a href="https://challonge.com/gscrl_april_annihilation_2026_tbd_150g_fairyweight" class="button fit">Brackets [Fairies]</a></li>
+										<li><a href="https://challonge.com/gscrl_april_annihilation_2026_1lb_antweight" class="button fit">Brackets [Ants]</a></li>
+										<li><a href="https://challonge.com/gscrl_april_annihilation_2026_1lb_plastic_antweight" class="button fit">Brackets [Plants]</a></li>
+										<li><a href="https://challonge.com/gscrl_april_annihilation_2026_3lb_beetleweight" class="button fit">Brackets [Beetles]</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<a href="https://www.robotcombatevents.com/events/5968" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Mechanical Mayhem</h2>
+									<h3>January 17th, 2026</h3>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/5968" class="button fit">Event Info</a></li>
+										<li><a href="https://www.youtube.com/watch?v=tCATF67E6lU" class="button fit">VOD</a></li>
+									</ul>
+
+									<ul class="actions">
+										<li><a href="https://truefinals.com/tournament/42964798c1e24576" class="button fit">Brackets [Fairies]</a></li>
+										<li><a href="https://truefinals.com/tournament/38e27b46cbb04a37" class="button fit">Brackets [Ants]</a></li>
+										<li><a href="https://truefinals.com/tournament/eb65fe55b137476c" class="button fit">Brackets [Plants]</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<a href="https://www.robotcombatevents.com/events/5967" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Seasonal Smackdown @ Bridgewater Mall</h2>
+									<h3>December 13th & 14th, 2025</h3>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/5967" class="button fit">Event Info</a></li>
+										<li><a href="https://www.youtube.com/watch?v=oz9mdTzDPK4" class="button fit">VOD [Day 1]</a></li>
+										<li><a href="https://www.youtube.com/watch?v=0hqMxioG6zs" class="button fit">VOD [Day 2]</a></li>
+									</ul>
+
+									<ul class="actions">
+										<li><a href="https://truefinals.com/tournament/3e1c5299bd914a81" class="button fit">Brackets [Ants]</a></li>
+										<li><a href="https://truefinals.com/tournament/64ecab5203f24f56" class="button fit">Brackets [Plants]</a></li>
+										<li><a href="https://truefinals.com/tournament/a44e44eaf603443e" class="button fit">Brackets [Beetles]</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<a href="https://www.robotcombatevents.com/events/5571" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Sussex County Maker Faire</h2>
+									<h3>October 4th & 5th, 2025</h3>
+									<p>Lafayette, New Jersey</p>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/5571" class="button fit">Event Info</a></li>
+										<li><a href="https://www.youtube.com/watch?v=X-reqVpto-U" class="button fit">VOD [Day 1]</a></li>
+										<li><a href="https://www.youtube.com/watch?v=L5EUYT6UvRs" class="button fit">VOD [Day 2]</a></li>
+									</ul>
+
+									<ul class="actions">
+										<li><a href="https://truefinals.com/tournament/76ccd6069c8a4849" class="button fit">Brackets [Ants]</a></li>
+										<li><a href="https://truefinals.com/tournament/d650d2f398f04e9d" class="button fit">Brackets [Plants]</a></li>
+										<li><a href="https://truefinals.com/tournament/6809c2e2446f48ee" class="button fit">Brackets [Beetles]</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+
+						<section>
+							<a href="https://www.robotcombatevents.com/events/4910" class="image"><img src="images/robot-event-16x9-1920.webp" alt="" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Eluktronics September Slam</h2>
+									<h3>September 6th, 2025</h3>
+									<hr>
+									<ul class="actions">
+										<li><a href="https://www.robotcombatevents.com/events/4910" class="button fit">Event Info</a></li>
+										<li><a href="https://www.youtube.com/watch?v=GUJixjS0C7k" class="button fit">VOD</a></li>
+									</ul>
+
+									<ul class="actions">
+										<li><a href="https://truefinals.com/tournament/0ac3441c4159499b" class="button fit">Brackets [Fairies]</a></li>
+										<li><a href="https://truefinals.com/tournament/4756f0466ead4d1e" class="button fit">Brackets [Ants]</a></li>
+										<li><a href="https://truefinals.com/tournament/3751f5c305754695" class="button fit">Brackets [Plants]</a></li>
+									</ul>
+								</div>
+							</div>
+						</section>
+					</section> <!-- end of event section. do not delete or sponsors below will not render. -->
+
+				
+
+				<!-- Sponsor Section -->
+					<section id="sponsors" class="wrapper style2 fade-up">
+						<style>
+							.sponsors {
+								align-self:center;
+							}
+						</style>
+						
+						<div class="inner">
+							<h2>Sponsors</h2>
+							<p>Sponsors make it possible for us to run the league.  Anything we do wouldn't be possible without them; thank you for your support!</p>
+							<div class="box alt">
+								<div class="row gtr-uniform">
+									<div class="col-4 sponsors"><span class="image fit"><a href="http://fubarlabs.org"><img src="images/sponsors/fubarlabs.png" alt="FUBAR Labs"></a></span></div>
+									<div class="col-4 sponsors"><span class="image fit"><a href="https://itgresa.com/"><img src="images/sponsors/ItGresa.jpg" alt="ItGresa Robotics"></a></span></div>
+									<div class="col-4 sponsors"><span class="image fit"><a href="https://repeat-robotics.com/"><img src="images/sponsors/repeat.png" alt=""></a></span></div>
+									<div class="col-4 sponsors"><span class="image fit"><a href="https://www.warren.edu/drones/"><img src="images/sponsors/warren_uas.png" alt="Warren UAS"></a></span></div>
+									<div class="col-4 sponsors"><span class="image fit"><a href="https://www.warrencountynj.gov/our-county/tourism"><img src="images/sponsors/wcbt.png" alt="Warren County Board of Tourism"></a></span></div>
+									<div class="col-4 sponsors"><span class="image fit"><a href="https://justcuzrobotics.com/"><img src="images/sponsors/justcuz.png" alt="Just 'Cuz Robotics"></a></span></div>
+									<div class="col-4 sponsors"><span class="image fit"><a href="https://turnabot.com/"><img src="images/sponsors/turnabot.png" alt="Turnabot"></a></span></div>
+								</div>
+							</div>
+							<h3>Want to support the league yourself?</h3>
+							<p>Use the button below to donate to our fiscal sponsor, FUBAR Labs, a registered 501c3.</p>
+
+							<ul class="actions">
+								<li>
+									<form action="https://www.paypal.com/donate" method="post" target="_top" id="my_form">
+										<!-- Identify your business so that you can collect the payments. -->
+										<!--<input type="hidden" name="business" value="donations@kcparkfriends.org">-->
+									   <input type="hidden" name="hosted_button_id" value="9MH4DD9RCYEFC">
+									   <!-- Specify details about the contribution -->
+									   <input type="hidden" name="no_recurring" value="0">
+									   <input type="hidden" name="item_name" value="Supporting the Garden State Combat Robotics League">
+									   <input type="hidden" name="currency_code" value="USD">
+									   <!-- Display the payment button. -->
+									   <!--<input type="image" name="submit" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate">
+									   <img alt="" width="1" height="1" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" >-->
+									<button type="submit" class="button primary">Donate Now</button>
+								</form>
+							</li>
+						</ul>
+						</div>
+					</section>
+
+					<!-- About -->
+					<section id="about" class="wrapper style2-alt fade-up">
+						<div class="inner">
+							<h2>About GSCRL</h2>
+							<p>We're a not-for-profit organization that puts on combat robotics events for folks local and traveling to build and fight their best bots! Events are held live during our competition season, and streamed online. Competitors give it their all to go home with trophies, prizes, and bragging rights, and you make it all possible.</p>
+							<p>Want to help? Let us know and <a href="#contactus">reach out!</a></p>
+						</div>
+					</section>
+
+					<!-- Contact Section -->
+						<section id="contactus" class="wrapper style1 fade-up">
+							<div class="inner">
+								<h2>Contact</h2>
+								<form action="mailto:njcombatrobots@gmail.com" method="get" enctype="text/plain">
+									<div class="row gtr-uniform">
+										<div class="col-6 col-12-xsmall">
+											<input type="text" name="name" id="name" value="" placeholder="Name">
+										</div>
+										<div class="col-12">
+											<select name="subject" id="subject">
+												<option value="">What do you want to contact us about?</option>
+												<option value="Registration Inquiry">Registration Question</option>
+												<option value="Media">Media Information</option>
+												<option value="Volunteering">I want to volunteer!</option>
+												<option value="Sponsorship">I want to sponsor your organization!</option>
+											</select>
+										</div>
+										<div class="col-12">
+											<textarea name="body" id="body" placeholder="Enter your message" rows="6"></textarea>
+										</div>
+										<div class="col-12">
+											<ul class="actions">
+												<li><input type="submit" value="Send via Email" class="primary"></li>
+											</ul>
+										</div>
+									</div>
+								</form>
+							</div>
+						</section>
+
+
+					<!-- Footer -->
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Garden State Combat Robotics League | All rights reserved.</li>
+					</ul>
+					<h3>Socials</h3>
+					<ul class="icons">
+						<li><a href="https://www.youtube.com/@gscrl" class="icon brands fa-youtube"><span class="label">YouTube</span></a></li>
+						<li><a href="mailto:njcombatrobots@gmail.com" class="icon fa-envelope"><span class="label">Email</span></a></li>
+						<li><a href="https://discord.gg/qwkeeVWgs2" class="icon brands fa-discord"><span class="label">Discord</span></a></li>
+						<li><a href="https://www.instagram.com/_gscrl/" class="icon brands fa-instagram"><span class="label">Instagram</span></a></li>
+					</ul>
+				</div>
+			</footer>
+			</div> <!-- end div wrapper -->
+
+		
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
 </html>

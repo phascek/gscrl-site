@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="529.16669mm"
+   height="529.16669mm"
+   viewBox="0 0 529.16669 529.16669"
+   version="1.1"
+   id="svg323"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs320" />
+  <g
+     id="layer1"
+     transform="translate(159.6067,116.08334)">
+    <path
+       d="m 104.97636,-53.384368 v 40.834733 L -34.533671,68.052766 V 228.94589 L 69.861386,289.2603 V 183.81326 H 29.300233 V 148.76391 H 104.97636 V 350.38435 L -69.648641,249.49343 V 47.505489 Z"
+       style="clip-rule:evenodd;fill:#212b8a;fill-rule:evenodd;stroke:none;stroke-width:2.38125;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;stroke-dasharray:none;stroke-opacity:1"
+       id="path6-9-4-3" />
+    <path
+       d="M 104.97636,-53.384368 279.60135,47.505489 V 88.340486 L 140.09186,7.7380853 V 148.76391 H 279.60135 V 249.49343 L 104.97636,350.38435 v -40.8358 L 244.48585,228.94589 V 183.81326 H 104.97636 Z"
+       style="clip-rule:evenodd;fill:#a42b36;fill-rule:evenodd;stroke:none;stroke-width:2.38125;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5;stroke-dasharray:none;stroke-opacity:1"
+       id="path9-2-9-5" />
+    <path
+       id="rect20-0-2-9"
+       style="clip-rule:evenodd;fill:#1c2154;fill-rule:evenodd;stroke-width:2.38125;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5"
+       d="M -9.5644392,68.052766 H -34.533433 V 228.94695 H -9.5644392 Z M -34.533142,228.94695 69.860857,289.26136 v -14.42111 l -79.4252698,-45.8933 z m 0,-160.894184 139.509502,-80.602137 V 1.8714792 L -9.5644128,68.052766 Z" />
+    <path
+       d="M 279.60202,88.340301 140.09252,7.7381647 V 22.159279 l 114.54077,66.181022 z"
+       style="clip-rule:evenodd;fill:#6a252b;fill-rule:evenodd;stroke:none;stroke-width:2.38125;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:1.5;stroke-dasharray:none;stroke-opacity:1"
+       id="path25-7-4-3" />
+    <path
+       id="rect33-6-8-1"
+       style="clip-rule:evenodd;fill:#6a252b;fill-rule:evenodd;stroke-width:2.38125;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:1.5"
+       d="m 244.48596,183.81422 h -24.96902 v 45.13244 h 24.96902 z m 0,45.13273 -139.5095,80.60213 v -14.42111 l 114.54077,-66.18102 z" />
+  </g>
+</svg>
