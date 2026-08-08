@@ -9,6 +9,7 @@
   #loading { color: #666; }
   #content { display: none; }
   #logout-btn { float: right; }
+  pre { background: #f5f5f5; padding: 12px; overflow-x: auto; }
 </style>
 </head>
 <body>
@@ -18,7 +19,8 @@
 <div id="content">
   <button id="logout-btn">Log Out</button>
   <h2>App</h2>
-  <p>Placeholder. Anything added here is visible only after login.</p>
+  <p>Authenticated read from the database:</p>
+  <pre id="db-data">Loading…</pre>
 </div>
 
 <script type="module">
@@ -31,17 +33,30 @@
 
   const loadingEl = document.getElementById("loading");
   const contentEl = document.getElementById("content");
+  const dbDataEl = document.getElementById("db-data");
 
   async function init() {
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
-      window.location.href = "../login.html";
+      window.location.href = "../error.html";
       return;
     }
 
     loadingEl.style.display = "none";
     contentEl.style.display = "block";
+
+    const { data, error } = await supabase
+      .from("roles")
+      .select("id, name")
+      .order("id");
+
+    if (error) {
+      dbDataEl.textContent = "Error reading from the database: " + error.message;
+      return;
+    }
+
+    dbDataEl.textContent = JSON.stringify(data, null, 2);
   }
 
   document.getElementById("logout-btn").addEventListener("click", async () => {
