@@ -42,12 +42,19 @@ async function init() {
   const role = userRow && userRow.roles ? userRow.roles.name : null;
   whoamiEl.textContent = session.user.email + (role ? " — " + role : " — no role");
 
-  if (role === "admin") {
+  // Navigation is driven entirely by capabilities. Admin is not special-cased
+  // here: is_admin() inside has_key()/my_keys() already grants every key, so
+  // this file never compares against a role name.
+  const { data: keys } = await supabase.rpc("my_keys");
+  const has = (k) => Array.isArray(keys) && keys.includes(k);
+
+  if (has("view-dashboard")) {
     document.getElementById("link-dashboard").style.display = "block";
+  }
+  if (has("view-app")) {
     document.getElementById("link-app").style.display = "block";
-  } else if (role === "volunteer") {
-    document.getElementById("link-app").style.display = "block";
-  } else {
+  }
+  if (!has("view-dashboard") && !has("view-app")) {
     document.getElementById("norole").style.display = "block";
   }
 }
