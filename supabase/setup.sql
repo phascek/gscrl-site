@@ -15,7 +15,14 @@
 -- Role ids come from a sequence and are NOT stable: volunteer was id 2 before
 -- board-member was added, and is id 3 now. Always look roles up by name.
 
-insert into public.roles (name) values ('volunteer'), ('board-member')
+-- Keep the sequence ahead of rows inserted with explicit ids (the dashboard
+-- does this), or the next insert collides on the primary key.
+select setval(pg_get_serial_sequence('public.roles','id'),
+              (select max(id) from public.roles));
+
+-- 'banned' carries no keys: the member can still sign in, but every
+-- capability check fails and they see nothing.
+insert into public.roles (name) values ('volunteer'), ('board-member'), ('banned')
   on conflict (name) do nothing;
 
 -- 2. Identity helpers --------------------------------------------------------
@@ -66,6 +73,8 @@ revoke all on function public.has_role() from public;
 grant execute on function public.is_admin() to authenticated, anon;
 grant execute on function public.has_role() to authenticated, anon;
 
+-- Note: this policy is replaced in section 5 once has_key() exists. Reading
+-- the member list is a capability (manage-users), not an admin-only act.
 drop policy if exists "admins can read all users" on public.users;
 create policy "admins can read all users"
   on public.users for select
@@ -189,3 +198,91 @@ select * from (values
   ('dashboard', 'Leadership notes', 'Test content. Visible to anyone holding view-dashboard.')
 ) as v(area, title, body)
 where not exists (select 1 from public.content);
+
+-- 5. User administration -----------------------------------------------------
+
+drop policy if exists "admins can read all users" on public.users;
+drop policy if exists "user managers can read all users" on public.users;
+create policy "user managers can read all users"
+  on public.users for select
+  using (public.has_key('manage-users'));
+
+create table if not exists public.user_role_changes (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references public.users(id) on delete cascade,
+  old_role_id integer references public.roles(id),
+  new_role_id integer references public.roles(id),
+  changed_by uuid references public.users(id),
+  comment text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists user_role_changes_user_id_idx
+  on public.user_role_changes (user_id, created_at desc);
+
+alter table public.user_role_changes enable row level security;
+
+drop policy if exists "user managers can read role history" on public.user_role_changes;
+create policy "user managers can read role history"
+  on public.user_role_changes for select
+  using (public.has_key('manage-users'));
+
+-- No INSERT/UPDATE/DELETE policies on the audit table. The only way to write
+-- it is set_user_role(), which refuses to run without a comment -- that is
+-- what makes the comment requirement real rather than a check the browser
+-- could skip. There is likewise no UPDATE policy on public.users, so role
+-- changes cannot bypass this function.
+
+create or replace function public.set_user_role(
+  target_user uuid,
+  new_role text,
+  change_comment text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_actor       uuid := auth.uid();
+  v_new_role_id integer;
+  v_old_role_id integer;
+  v_exists      boolean;
+begin
+  if not public.has_key('manage-users') then
+    raise exception 'Not permitted' using errcode = '42501';
+  end if;
+
+  if change_comment is null or btrim(change_comment) = '' then
+    raise exception 'A comment is required to change a role' using errcode = '22023';
+  end if;
+
+  -- Guard against lockout: with a single admin, self-banning would strand
+  -- everyone. Someone else has to demote you.
+  if target_user = v_actor then
+    raise exception 'You cannot change your own role' using errcode = '22023';
+  end if;
+
+  select id into v_new_role_id from public.roles where name = new_role;
+  if v_new_role_id is null then
+    raise exception 'Unknown role: %', new_role using errcode = '22023';
+  end if;
+
+  select true, role_id into v_exists, v_old_role_id
+  from public.users where id = target_user;
+
+  if v_exists is not true then
+    raise exception 'Unknown user' using errcode = '22023';
+  end if;
+
+  update public.users set role_id = v_new_role_id where id = target_user;
+
+  insert into public.user_role_changes
+    (user_id, old_role_id, new_role_id, changed_by, comment)
+  values
+    (target_user, v_old_role_id, v_new_role_id, v_actor, btrim(change_comment));
+end;
+$$;
+
+revoke all on function public.set_user_role(uuid, text, text) from public;
+grant execute on function public.set_user_role(uuid, text, text) to authenticated;

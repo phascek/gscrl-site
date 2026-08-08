@@ -1,15 +1,15 @@
-// Admin-only invite endpoint.
+// Invite endpoint, restricted to callers holding the manage-users key.
 //
 // Creating a user requires the service role key, which can never ship in a
 // static page -- hence this function. It re-checks the caller's capability
-// server-side rather than trusting the browser, so someone without the
-// manage-users key who calls this endpoint directly is refused.
+// server-side rather than trusting the browser.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
 const SITE_URL = "https://phascek.github.io/gscrl-site";
 const ALLOWED_ORIGIN = "https://phascek.github.io";
 const REQUIRED_KEY = "manage-users";
+const DEFAULT_ROLE = "volunteer";
 
 const cors = {
   "Access-Control-Allow-Origin": ALLOWED_ORIGIN,
@@ -41,6 +41,8 @@ Deno.serve(async (req) => {
   if (userErr || !user) return json({ error: "Not signed in" }, 401);
 
   // 2. Confirm the caller holds the manage-users key. Never trust the page.
+  // Admin is a superuser role and carries no role_keys rows, mirroring what
+  // has_key() does in SQL.
   const { data: callerRow } = await admin
     .from("users")
     .select("role_id")
@@ -49,18 +51,29 @@ Deno.serve(async (req) => {
 
   if (!callerRow?.role_id) return json({ error: "Not permitted" }, 403);
 
-  const { data: keyRow } = await admin
-    .from("role_keys")
-    .select("key_id, keys!inner(name)")
-    .eq("role_id", callerRow.role_id)
-    .eq("keys.name", REQUIRED_KEY)
+  const { data: callerRole } = await admin
+    .from("roles")
+    .select("name")
+    .eq("id", callerRow.role_id)
     .maybeSingle();
 
-  if (!keyRow) return json({ error: "Not permitted" }, 403);
+  let permitted = callerRole?.name === "admin";
+
+  if (!permitted) {
+    const { data: keyRow } = await admin
+      .from("role_keys")
+      .select("key_id, keys!inner(name)")
+      .eq("role_id", callerRow.role_id)
+      .eq("keys.name", REQUIRED_KEY)
+      .maybeSingle();
+    permitted = !!keyRow;
+  }
+
+  if (!permitted) return json({ error: "Not permitted" }, 403);
 
   // 3. Validate input. Roles are read from the table rather than hardcoded,
   // so adding a role does not require redeploying this function.
-  let body: { email?: string; role?: string };
+  let body: { email?: string; role?: string; comment?: string };
   try {
     body = await req.json();
   } catch {
@@ -68,7 +81,8 @@ Deno.serve(async (req) => {
   }
 
   const email = (body.email ?? "").trim().toLowerCase();
-  const role = (body.role ?? "").trim();
+  const role = (body.role ?? "").trim() || DEFAULT_ROLE;
+  const comment = (body.comment ?? "").trim() || `Invited as ${role}`;
 
   if (!email || !email.includes("@")) return json({ error: "A valid email is required" }, 400);
 
@@ -91,7 +105,6 @@ Deno.serve(async (req) => {
   }
 
   // 5. Pre-assign the role so the member has access the moment they arrive.
-  // Done with the service role because the invitee cannot set their own role.
   const { error: roleErr } = await admin
     .from("users")
     .upsert({ id: invited.user.id, email, role_id: roleRow.id }, { onConflict: "id" });
@@ -101,6 +114,16 @@ Deno.serve(async (req) => {
       error: `Invite sent, but assigning the role failed: ${roleErr.message}`,
     }, 500);
   }
+
+  // 6. Record the invite in the same audit trail as later role changes, so an
+  // account's history starts at creation rather than at its first edit.
+  await admin.from("user_role_changes").insert({
+    user_id: invited.user.id,
+    old_role_id: null,
+    new_role_id: roleRow.id,
+    changed_by: user.id,
+    comment,
+  });
 
   return json({ ok: true, email, role });
 });
