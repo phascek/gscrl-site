@@ -3,9 +3,10 @@
 	<head>
 		<title>Garden State Combat Robotics League</title>
 		<meta charset="utf-8" />
-		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.paypalobjects.com; form-action https://www.paypal.com mailto:; base-uri 'none'; object-src 'none'" />
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://www.paypalobjects.com; connect-src 'self' https://jcqnsgbnsmwoncjehvqq.supabase.co; form-action https://www.paypal.com mailto:; base-uri 'none'; object-src 'none'" />
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
+		<link rel="stylesheet" href="assets/css/gscrl-auth.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 	</head>
 	<body class="is-preload">
@@ -24,7 +25,21 @@
 							<li><a href="#about">About</a></li>
 							<li><a href="#contactus">Contact Us</a></li>
 							<li><a href="support.html">Support Us</a></li>
-							<li><a href="login.html">Member Login</a></li>
+							<li id="nav-dashboard" class="member-nav"><a href="#" data-area="dashboard">Leadership Dashboard</a></li>
+							<li id="nav-app" class="member-nav"><a href="#" data-area="app">GSCRL App</a></li>
+							<li id="nav-manage" class="member-nav"><a href="app/manage-users.html">Manage Users</a></li>
+							<li id="auth-link"><a href="#" id="show-login">Member Login</a></li>
+							<li id="login-panel">
+								<input type="email" id="side-email" placeholder="Email" autocomplete="username">
+								<input type="password" id="side-password" placeholder="Password" autocomplete="current-password">
+								<button type="button" id="side-login-btn" class="button primary small fit">Log In</button>
+								<a href="#" id="cancel-login" class="side-small">Cancel</a>
+								<div id="side-error"></div>
+							</li>
+							<li id="signed-in">
+								<span id="whoami" class="side-small"></span>
+								<a href="#" id="side-logout">Log Out</a>
+							</li>
 						</ul>
 					</nav>
 				</div>
@@ -399,6 +414,8 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+			<script src="vendor/supabase-js-2.112.2.js"></script>
+			<script type="module" src="js/site-auth.js"></script>
 
 	</body>
 </html>

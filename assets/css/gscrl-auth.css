@@ -1,0 +1,93 @@
+/* Sidebar auth panel and the member content pane.
+   Kept in its own file so the template's main.css stays untouched and can be
+   refreshed from upstream without losing these rules. */
+
+/* Everything member-related starts hidden and is revealed by js/site-auth.js
+   once the session and capabilities are known. */
+#sidebar nav ul li.member-nav,
+#sidebar nav ul li#login-panel,
+#sidebar nav ul li#signed-in {
+	display: none;
+}
+
+#sidebar nav ul li#login-panel.visible,
+#sidebar nav ul li#signed-in.visible {
+	display: block;
+}
+
+#sidebar nav ul li.member-nav.visible {
+	display: block;
+}
+
+/* Push the auth items to the bottom of the sidebar nav. */
+#sidebar nav ul li#auth-link,
+#sidebar nav ul li#login-panel,
+#sidebar nav ul li#signed-in {
+	margin-top: 1.5em;
+	border-top: solid 1px rgba(255, 255, 255, 0.15);
+	padding-top: 1em;
+}
+
+#sidebar nav ul li#login-panel input {
+	width: 100%;
+	margin-bottom: 0.5em;
+	padding: 0.5em 0.75em;
+	height: auto;
+	font-size: 0.8em;
+}
+
+#sidebar nav ul li#login-panel button {
+	width: 100%;
+	margin-bottom: 0.5em;
+}
+
+.side-small {
+	display: block;
+	font-size: 0.75em;
+	opacity: 0.75;
+	margin-bottom: 0.4em;
+	word-break: break-all;
+}
+
+#side-error {
+	color: #ff6b6b;
+	font-size: 0.75em;
+	margin-top: 0.4em;
+}
+
+/* Right-hand pane for protected content. Sits inside #wrapper alongside the
+   public sections, which are hidden while it is showing. */
+#member-content {
+	display: none;
+	padding: 4em 4em 3em 4em;
+	max-width: 60em;
+}
+
+#member-content.visible {
+	display: block;
+}
+
+#member-content .member-item {
+	border: solid 1px rgba(160, 160, 160, 0.3);
+	padding: 1em 1.25em;
+	margin-bottom: 1em;
+}
+
+#member-content .member-item h3 {
+	margin-bottom: 0.4em;
+}
+
+#member-content .member-item p {
+	margin: 0;
+}
+
+#member-content .member-note {
+	opacity: 0.7;
+	font-size: 0.9em;
+}
+
+@media screen and (max-width: 736px) {
+	#member-content {
+		padding: 3em 2em 2em 2em;
+	}
+}
