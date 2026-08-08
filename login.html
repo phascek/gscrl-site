@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>GSCRL — Login</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src https://jcqnsgbnsmwoncjehvqq.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <style>
   body { font-family: sans-serif; max-width: 400px; margin: 80px auto; padding: 0 20px; }
   input { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box; }
@@ -24,58 +25,8 @@
 <div id="msg"></div>
 <a href="index.html">← Back to public page</a>
 
-<script type="module">
-  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-  const supabase = createClient(
-    "https://jcqnsgbnsmwoncjehvqq.supabase.co",
-    "sb_publishable_99kP3nKCaLhcwShKLs8zZA_K1nxz4xf"
-  );
-
-  const emailEl = document.getElementById("email");
-  const passEl = document.getElementById("password");
-  const errorEl = document.getElementById("error");
-  const msgEl = document.getElementById("msg");
-
-  document.getElementById("login-btn").addEventListener("click", async () => {
-    errorEl.textContent = "";
-    msgEl.textContent = "";
-    const { error } = await supabase.auth.signInWithPassword({
-      email: emailEl.value,
-      password: passEl.value
-    });
-    if (error) {
-      errorEl.textContent = "Login failed: " + error.message;
-    } else {
-      window.location.href = "portal.html";
-    }
-  });
-
-  document.getElementById("signup-btn").addEventListener("click", async () => {
-    errorEl.textContent = "";
-    msgEl.textContent = "";
-    // Send the confirmation link back to portal.html rather than the site
-    // root: index.html has no Supabase client, so a token landing there is
-    // silently discarded and the user arrives logged out. Derived from the
-    // current URL so this follows the site if it ever moves.
-    const { error } = await supabase.auth.signUp({
-      email: emailEl.value,
-      password: passEl.value,
-      options: {
-        emailRedirectTo: new URL("portal.html", window.location.href).href
-      }
-    });
-    if (error) {
-      errorEl.textContent = "Sign up failed: " + error.message;
-    } else {
-      msgEl.textContent = "Account created. Check your email to confirm, then log in.";
-    }
-  });
-
-  passEl.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") document.getElementById("login-btn").click();
-  });
-</script>
+<script src="vendor/supabase-js-2.112.2.js"></script>
+<script type="module" src="js/login.js"></script>
 
 </body>
 </html>

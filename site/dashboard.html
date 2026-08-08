@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>GSCRL — Leadership Dashboard</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; connect-src https://jcqnsgbnsmwoncjehvqq.supabase.co; img-src 'self' data:; base-uri 'none'; form-action 'none'">
 <style>
   body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
   #loading { color: #666; }
@@ -26,61 +27,8 @@
   <a class="back" href="../portal.html">← Back to members area</a>
 </div>
 
-<script type="module">
-  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-  const supabase = createClient(
-    "https://jcqnsgbnsmwoncjehvqq.supabase.co",
-    "sb_publishable_99kP3nKCaLhcwShKLs8zZA_K1nxz4xf"
-  );
-
-  const loadingEl = document.getElementById("loading");
-  const contentEl = document.getElementById("content");
-  const itemsEl = document.getElementById("items");
-
-  async function init() {
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session) {
-      window.location.href = "../error.html";
-      return;
-    }
-
-    // RLS returns dashboard rows only to admins. Anyone else gets an empty
-    // result, so a non-admin who types this URL has nothing to render.
-    const { data, error } = await supabase
-      .from("content")
-      .select("id, title, body")
-      .eq("area", "dashboard")
-      .order("id");
-
-    if (error || !data || data.length === 0) {
-      window.location.href = "../error.html";
-      return;
-    }
-
-    loadingEl.style.display = "none";
-    contentEl.style.display = "block";
-
-    for (const row of data) {
-      const div = document.createElement("div");
-      div.className = "item";
-      const h3 = document.createElement("h3");
-      h3.textContent = row.title;
-      const p = document.createElement("p");
-      p.textContent = row.body;
-      div.append(h3, p);
-      itemsEl.append(div);
-    }
-  }
-
-  document.getElementById("logout-btn").addEventListener("click", async () => {
-    await supabase.auth.signOut();
-    window.location.href = "../";
-  });
-
-  init();
-</script>
+<script src="../vendor/supabase-js-2.112.2.js"></script>
+<script type="module" src="../js/dashboard.js"></script>
 
 </body>
 </html>
