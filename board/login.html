@@ -22,7 +22,7 @@
 <button id="signup-btn" style="background:none;border:1px solid #ccc;">Sign Up Instead</button>
 <div id="error"></div>
 <div id="msg"></div>
-<a href="index.html">← Back to public page</a>
+<a href="../">← Back to public page</a>
 
 <script type="module">
   import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -47,7 +47,7 @@
     if (error) {
       errorEl.textContent = "Login failed: " + error.message;
     } else {
-      window.location.href = "private.html";
+      window.location.href = "index.html";
     }
   });
 
