@@ -55,10 +55,34 @@ create table if not exists public.content (
 
 alter table public.content enable row level security;
 
+-- App content requires an assigned role, not merely a session. Signup is open
+-- to the public, so "authenticated" alone would let any stranger who
+-- registered read member content. With this, a new signup lands on the portal
+-- with no role and sees nothing until an admin grants one.
+
+create or replace function public.has_role()
+returns boolean
+language sql
+security definer
+stable
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.users u
+    where u.id = auth.uid()
+      and u.role_id is not null
+  );
+$$;
+
+revoke all on function public.has_role() from public;
+grant execute on function public.has_role() to authenticated, anon;
+
 drop policy if exists "authenticated can read app content" on public.content;
-create policy "authenticated can read app content"
+drop policy if exists "members with a role can read app content" on public.content;
+create policy "members with a role can read app content"
   on public.content for select
-  using (area = 'app' and auth.uid() is not null);
+  using (area = 'app' and public.has_role());
 
 drop policy if exists "admins can read dashboard content" on public.content;
 create policy "admins can read dashboard content"
