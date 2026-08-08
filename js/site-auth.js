@@ -2,11 +2,14 @@
 // the public nav and the auth panel, and protected content renders into the
 // right-hand pane instead of navigating to another page.
 //
-// Nothing here is a security control. Every link and pane below is decided by
-// my_keys(), but the database enforces the same rules independently -- someone
-// who unhides a link still gets zero rows back.
+// Nothing here is a security control. Every link, dropdown option and pane
+// below is chosen from my_keys(), but the database enforces the same rules
+// independently: content reads go through RLS, role changes through
+// set_user_role(), and invites through an Edge Function that re-checks the
+// manage-users key. Unhiding anything in the DOM yields no data.
 
 import { client } from "./config.js";
+import { renderManageUsers } from "./manage-users-view.js";
 
 const supabase = client();
 
@@ -21,8 +24,10 @@ const sideError = el("side-error");
 const membersHeading = el("members-heading");
 const navDashboard = el("nav-dashboard");
 const navApp = el("nav-app");
-const navManage = el("nav-manage");
-const allMemberNav = [membersHeading, navDashboard, navApp, navManage];
+const allMemberNav = [membersHeading, navDashboard, navApp];
+
+// Capabilities for the current session, refreshed on every sign-in/out.
+let heldKeys = [];
 
 // The right-hand pane, created next to the template's public sections.
 const wrapper = document.getElementById("wrapper");
@@ -52,121 +57,172 @@ function setVisible(node, on) {
   if (node === authLink) node.style.display = on ? "block" : "none";
 }
 
+function backLink() {
+  const a = document.createElement("a");
+  a.href = "#";
+  a.className = "pane-back";
+  a.textContent = "← Back to the public site";
+  a.addEventListener("click", (e) => {
+    e.preventDefault();
+    showPublic();
+  });
+  return a;
+}
+
 // ---------------------------------------------------------------- rendering
 
-function renderItems(title, rows) {
-  pane.replaceChildren();
+async function fetchArea(area) {
+  const { data, error } = await supabase
+    .from("content")
+    .select("id, title, body")
+    .eq("area", area)
+    .order("id");
+  return error ? [] : (data ?? []);
+}
 
-  const h = document.createElement("h2");
-  h.textContent = title;
-  pane.append(h);
+function renderList(container, rows) {
+  container.replaceChildren();
 
   if (!rows || rows.length === 0) {
     const p = document.createElement("p");
     p.className = "member-note";
     p.textContent = "There is nothing here yet.";
-    pane.append(p);
-  } else {
-    for (const row of rows) {
-      const div = document.createElement("div");
-      div.className = "member-item";
-      const h3 = document.createElement("h3");
-      h3.textContent = row.title;
-      const p = document.createElement("p");
-      p.textContent = row.body;
-      div.append(h3, p);
-      pane.append(div);
-    }
+    container.append(p);
+    return;
   }
 
-  const back = document.createElement("a");
-  back.href = "#";
-  back.textContent = "← Back to the public site";
-  back.addEventListener("click", (e) => {
-    e.preventDefault();
-    showPublic();
-  });
-  pane.append(back);
+  for (const row of rows) {
+    const div = document.createElement("div");
+    div.className = "member-item";
+    const h3 = document.createElement("h3");
+    h3.textContent = row.title;
+    const p = document.createElement("p");
+    p.textContent = row.body;
+    div.append(h3, p);
+    container.append(div);
+  }
+}
+
+async function openDashboard() {
+  showPane();
+  pane.replaceChildren();
+
+  const header = document.createElement("div");
+  header.className = "pane-header";
+  const h2 = document.createElement("h2");
+  h2.textContent = "Leadership Dashboard";
+  header.append(h2);
+
+  const body = document.createElement("div");
+  pane.append(header, body, backLink());
+
+  renderList(body, await fetchArea("dashboard"));
+}
+
+// The app gets its own header with a view dropdown. Manage Users is an option
+// there rather than a sidebar entry, and appears only for members holding the
+// manage-users key -- which the server checks again on every call it makes.
+async function openApp(initialView = "home") {
+  showPane();
+  pane.replaceChildren();
+
+  const canManage = heldKeys.includes("manage-users");
+
+  const header = document.createElement("div");
+  header.className = "pane-header";
+
+  const h2 = document.createElement("h2");
+  h2.textContent = "GSCRL App";
+
+  const select = document.createElement("select");
+  select.id = "app-view";
+  select.className = "pane-select";
+  select.append(new Option("Home", "home"));
+  if (canManage) select.append(new Option("Manage Users", "manage-users"));
+
+  header.append(h2, select);
+
+  const body = document.createElement("div");
+  body.id = "app-body";
+
+  pane.append(header, body, backLink());
+
+  async function show(view) {
+    body.replaceChildren();
+
+    if (view === "manage-users" && canManage) {
+      const { data: { session } } = await supabase.auth.getSession();
+      await renderManageUsers(supabase, body, session ? session.user.id : null);
+      return;
+    }
+
+    renderList(body, await fetchArea("app"));
+  }
+
+  select.addEventListener("change", () => show(select.value));
+
+  const start = initialView === "manage-users" && canManage ? "manage-users" : "home";
+  select.value = start;
+  await show(start);
 }
 
 // Landing shown in the right pane immediately after signing in, so logging in
 // visibly goes somewhere instead of leaving the public page up.
 function renderMembersLanding(email, held) {
+  showPane();
   pane.replaceChildren();
 
-  const h = document.createElement("h2");
-  h.textContent = "Members Area";
-  pane.append(h);
+  const header = document.createElement("div");
+  header.className = "pane-header";
+  const h2 = document.createElement("h2");
+  h2.textContent = "Members Area";
+  header.append(h2);
+  pane.append(header);
 
   const who = document.createElement("p");
   who.className = "member-note";
   who.textContent = `Signed in as ${email}.`;
   pane.append(who);
 
-  const areas = [
-    { key: "view-dashboard", area: "dashboard", label: "Leadership Dashboard", note: "Board and leadership material." },
-    { key: "view-app", area: "app", label: "GSCRL App", note: "Open to all signed-in members." },
-  ].filter((a) => held.includes(a.key));
+  const cards = [];
+  if (held.includes("view-dashboard")) {
+    cards.push({ label: "Leadership Dashboard", note: "Board and leadership material.", open: openDashboard });
+  }
+  if (held.includes("view-app")) {
+    cards.push({ label: "GSCRL App", note: "Open to all signed-in members.", open: () => openApp("home") });
+  }
+  if (held.includes("manage-users")) {
+    cards.push({ label: "Manage Users", note: "Invite members and change roles, inside the app.", open: () => openApp("manage-users") });
+  }
 
-  if (areas.length === 0) {
+  if (cards.length === 0) {
     const p = document.createElement("p");
     p.textContent =
       "Your account does not have access to anything yet. An admin needs to grant your role the right permissions.";
     pane.append(p);
+    pane.append(backLink());
     return;
   }
 
-  const intro = document.createElement("p");
-  intro.textContent = "Choose an area from the menu on the left, or pick one here:";
-  pane.append(intro);
-
-  for (const a of areas) {
+  for (const c of cards) {
     const div = document.createElement("div");
     div.className = "member-item";
     const h3 = document.createElement("h3");
     const link = document.createElement("a");
     link.href = "#";
-    link.textContent = a.label;
+    link.textContent = c.label;
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      openArea(a.area, a.label);
+      c.open();
     });
     h3.append(link);
     const p = document.createElement("p");
-    p.textContent = a.note;
+    p.textContent = c.note;
     div.append(h3, p);
     pane.append(div);
   }
 
-  if (held.includes("manage-users")) {
-    const div = document.createElement("div");
-    div.className = "member-item";
-    const h3 = document.createElement("h3");
-    const link = document.createElement("a");
-    link.href = "app/manage-users.html";
-    link.textContent = "Manage Users";
-    h3.append(link);
-    const p = document.createElement("p");
-    p.textContent = "Invite members and change roles.";
-    div.append(h3, p);
-    pane.append(div);
-  }
-}
-
-async function openArea(area, title) {
-  const { data, error } = await supabase
-    .from("content")
-    .select("id, title, body")
-    .eq("area", area)
-    .order("id");
-
-  showPane();
-
-  if (error) {
-    renderItems(title, []);
-    return;
-  }
-  renderItems(title, data);
+  pane.append(backLink());
 }
 
 // ------------------------------------------------------------------- state
@@ -175,12 +231,13 @@ async function applySession(session) {
   sideError.textContent = "";
 
   if (!session) {
+    heldKeys = [];
     setVisible(authLink, true);
     setVisible(loginPanel, false);
     setVisible(signedIn, false);
     for (const node of allMemberNav) setVisible(node, false);
     showPublic();
-    return;
+    return [];
   }
 
   setVisible(authLink, false);
@@ -190,16 +247,16 @@ async function applySession(session) {
 
   const { data: keys } = await supabase.rpc("my_keys");
   const held = Array.isArray(keys) ? keys : [];
+  heldKeys = held;
 
   const canDashboard = held.includes("view-dashboard");
   const canApp = held.includes("view-app");
   const canManage = held.includes("manage-users");
 
   setVisible(navDashboard, canDashboard);
-  // Manage Users lives under GSCRL App, so the parent has to be present for
-  // the child to be reachable even if this member only holds manage-users.
+  // Manage Users is reached from inside the app, so the app entry has to show
+  // for a member holding manage-users even without view-app.
   setVisible(navApp, canApp || canManage);
-  setVisible(navManage, canManage);
   setVisible(membersHeading, canDashboard || canApp || canManage);
 
   return held;
@@ -240,8 +297,7 @@ el("side-login-btn").addEventListener("click", async () => {
 
   el("side-password").value = "";
   const held = await applySession(data.session);
-  renderMembersLanding(data.session.user.email, held ?? []);
-  showPane();
+  renderMembersLanding(data.session.user.email, held);
 });
 
 el("side-password").addEventListener("keydown", (e) => {
@@ -254,11 +310,11 @@ el("side-logout").addEventListener("click", async (e) => {
   await applySession(null);
 });
 
-// Manage Users is still its own page, so only the data-area links are wired.
 for (const link of document.querySelectorAll("#sidebar nav a[data-area]")) {
   link.addEventListener("click", (e) => {
     e.preventDefault();
-    openArea(link.dataset.area, link.textContent.trim());
+    if (link.dataset.area === "dashboard") openDashboard();
+    else openApp("home");
   });
 }
 
