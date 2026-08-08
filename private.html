@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSCRL — Members</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: sans-serif; max-width: 600px; margin: 40px auto; padding: 0 20px; }
+  #loading { color: #666; }
+  #content { display: none; }
+  #logout-btn { float: right; }
+  pre { background: #f5f5f5; padding: 12px; overflow-x: auto; }
+</style>
+</head>
+<body>
+
+<div id="loading">Checking login…</div>
+
+<div id="content">
+  <button id="logout-btn">Log Out</button>
+  <h2>Members Area</h2>
+  <p>If you can read this, you're logged in AND Row Level Security let you read your own row from the database.</p>
+  <pre id="user-data">Loading your record…</pre>
+</div>
+
+<script type="module">
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+  const supabase = createClient(
+    "https://jcqnsgbnsmwoncjehvqq.supabase.co",
+    "sb_publishable_99kP3nKCaLhcwShKLs8zZA_K1nxz4xf"
+  );
+
+  const loadingEl = document.getElementById("loading");
+  const contentEl = document.getElementById("content");
+  const userDataEl = document.getElementById("user-data");
+
+  async function init() {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      window.location.href = "login.html";
+      return;
+    }
+
+    loadingEl.style.display = "none";
+    contentEl.style.display = "block";
+
+    let { data: userRow, error } = await supabase
+      .from("users")
+      .select("*, roles(name)")
+      .eq("id", session.user.id)
+      .maybeSingle();
+
+    if (!userRow) {
+      const { error: insertError } = await supabase
+        .from("users")
+        .insert({ id: session.user.id, email: session.user.email });
+
+      if (insertError) {
+        userDataEl.textContent = "Error creating your record: " + insertError.message;
+        return;
+      }
+
+      ({ data: userRow, error } = await supabase
+        .from("users")
+        .select("*, roles(name)")
+        .eq("id", session.user.id)
+        .maybeSingle());
+    }
+
+    if (error) {
+      userDataEl.textContent = "Error reading your record: " + error.message;
+      return;
+    }
+
+    userDataEl.textContent = JSON.stringify(userRow, null, 2);
+  }
+
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    await supabase.auth.signOut();
+    window.location.href = "index.html";
+  });
+
+  init();
+</script>
+
+</body>
+</html>

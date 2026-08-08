@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GSCRL — Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  body { font-family: sans-serif; max-width: 400px; margin: 80px auto; padding: 0 20px; }
+  input { width: 100%; padding: 10px; margin: 6px 0; box-sizing: border-box; }
+  button { width: 100%; padding: 10px; margin-top: 10px; cursor: pointer; }
+  #error { color: #c0392b; margin-top: 10px; font-size: 0.9em; }
+  #msg { color: #2c7a2c; margin-top: 10px; font-size: 0.9em; }
+  a { display: block; margin-top: 16px; font-size: 0.85em; text-align: center; }
+</style>
+</head>
+<body>
+
+<h2>Member Login</h2>
+<input type="email" id="email" placeholder="Email" autocomplete="username">
+<input type="password" id="password" placeholder="Password" autocomplete="current-password">
+<button id="login-btn">Log In</button>
+<button id="signup-btn" style="background:none;border:1px solid #ccc;">Sign Up Instead</button>
+<div id="error"></div>
+<div id="msg"></div>
+<a href="index.html">← Back to public page</a>
+
+<script type="module">
+  import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+  const supabase = createClient(
+    "https://jcqnsgbnsmwoncjehvqq.supabase.co",
+    "sb_publishable_99kP3nKCaLhcwShKLs8zZA_K1nxz4xf"
+  );
+
+  const emailEl = document.getElementById("email");
+  const passEl = document.getElementById("password");
+  const errorEl = document.getElementById("error");
+  const msgEl = document.getElementById("msg");
+
+  document.getElementById("login-btn").addEventListener("click", async () => {
+    errorEl.textContent = "";
+    msgEl.textContent = "";
+    const { error } = await supabase.auth.signInWithPassword({
+      email: emailEl.value,
+      password: passEl.value
+    });
+    if (error) {
+      errorEl.textContent = "Login failed: " + error.message;
+    } else {
+      window.location.href = "private.html";
+    }
+  });
+
+  document.getElementById("signup-btn").addEventListener("click", async () => {
+    errorEl.textContent = "";
+    msgEl.textContent = "";
+    const { error } = await supabase.auth.signUp({
+      email: emailEl.value,
+      password: passEl.value
+    });
+    if (error) {
+      errorEl.textContent = "Sign up failed: " + error.message;
+    } else {
+      msgEl.textContent = "Account created. Check your email to confirm, then log in.";
+    }
+  });
+
+  passEl.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") document.getElementById("login-btn").click();
+  });
+</script>
+
+</body>
+</html>
