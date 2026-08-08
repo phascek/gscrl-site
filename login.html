@@ -54,9 +54,16 @@
   document.getElementById("signup-btn").addEventListener("click", async () => {
     errorEl.textContent = "";
     msgEl.textContent = "";
+    // Send the confirmation link back to portal.html rather than the site
+    // root: index.html has no Supabase client, so a token landing there is
+    // silently discarded and the user arrives logged out. Derived from the
+    // current URL so this follows the site if it ever moves.
     const { error } = await supabase.auth.signUp({
       email: emailEl.value,
-      password: passEl.value
+      password: passEl.value,
+      options: {
+        emailRedirectTo: new URL("portal.html", window.location.href).href
+      }
     });
     if (error) {
       errorEl.textContent = "Sign up failed: " + error.message;
