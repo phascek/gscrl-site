@@ -114,7 +114,7 @@ async function openDashboard() {
   header.append(h2);
 
   const body = document.createElement("div");
-  pane.append(header, body, backLink());
+  pane.append(header, body);
 
   renderList(body, await fetchArea("dashboard"));
 }
@@ -145,7 +145,7 @@ async function openApp(initialView = "home") {
   const body = document.createElement("div");
   body.id = "app-body";
 
-  pane.append(header, body, backLink());
+  pane.append(header, body);
 
   async function show(view) {
     body.replaceChildren();
